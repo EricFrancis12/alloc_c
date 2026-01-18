@@ -62,9 +62,9 @@ default: $(SRC_FILES1) $(SRC_FILES2)
 	- ./$(TARGET2)
 
 test/test_runners/TestProductionCode_Runner.c: test/TestProductionCode.c
-	ruby $(UNITY_ROOT)/auto/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c
+	ruby $(UNITY_ROOT)/scripts/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c
 test/test_runners/TestProductionCode2_Runner.c: test/TestProductionCode2.c
-	ruby $(UNITY_ROOT)/auto/generate_test_runner.rb test/TestProductionCode2.c test/test_runners/TestProductionCode2_Runner.c
+	ruby $(UNITY_ROOT)/scripts/generate_test_runner.rb test/TestProductionCode2.c test/test_runners/TestProductionCode2_Runner.c
 
 clean:
 	$(CLEANUP) $(TARGET1) $(TARGET2) test/test_runners/*
