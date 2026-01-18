@@ -1,0 +1,7 @@
+**/*.exe
+**/*.msi
+**/*.o
+**/*.so
+/main
+
+**/test_runners
