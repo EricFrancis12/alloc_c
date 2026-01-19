@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "base.h"
+
 #define FNV_OFFSET 14695981039346656037UL
 #define FNV_PRIME 1099511628211UL
 
@@ -65,7 +67,7 @@
         return hash;                                                              \
     }                                                                             \
                                                                                   \
-    bool ht_name##_get(ht_name *table, k key, u64 *out)                           \
+    bool ht_name##_get(ht_name *table, k key, v *out)                             \
     {                                                                             \
         u64 hash = ht_name##_hash_key(key);                                       \
         size_t index = (size_t)(hash & (u64)(table->capacity - 1));               \
