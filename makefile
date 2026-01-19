@@ -27,15 +27,13 @@ CFLAGS += -Wunreachable-code
 CFLAGS += -Winit-self
 CFLAGS += -Wmissing-field-initializers
 CFLAGS += -Wno-unknown-pragmas
-CFLAGS += -Wstrict-prototypes
 CFLAGS += -Wundef
-CFLAGS += -Wold-style-definition
 
 TEST_RUNNERS_DIR=test/test_runners
 INC_DIRS=-Isrc -I/src
 
 main: clean
-	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) src/main.c src/hashtable.c -o main
+	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) src/main.c src/alloc.c src/hashtable.c -o main
 
 run: main
 	./main

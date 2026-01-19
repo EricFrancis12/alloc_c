@@ -45,7 +45,7 @@
     {                                                                             \
         u64 hash = FNV_OFFSET;                                                    \
         unsigned char *p = (unsigned char *)&key;                                 \
-        for (int i = 0; i < sizeof(u64); i++)                                     \
+        for (size_t i = 0; i < sizeof(u64); i++)                                  \
         {                                                                         \
             hash ^= (u64)p[i];                                                    \
             hash *= FNV_PRIME;                                                    \

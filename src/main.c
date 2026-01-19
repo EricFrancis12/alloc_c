@@ -1,8 +1,9 @@
 #include <stdio.h>
 
+#include "alloc.h"
 #include "hashtable.h"
 
-main()
+int main()
 {
     printf("Hello\n");
 
@@ -15,6 +16,12 @@ main()
     printf("out: %llu\n", out);
 
     ht_u64_u64_destroy(table);
+
+    allocator *alloc = alloc_create(1024);
+
+    alloc_destroy(alloc);
+
+    printf("Goodbye\n");
 
     return 0;
 }
