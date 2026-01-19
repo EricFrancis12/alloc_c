@@ -161,14 +161,24 @@ u64 allocator_free(allocator *alloc, void *p)
     return n;
 }
 
-bool allocator_get_open(allocator *alloc, void *p, u64 *out)
+static u64 allocator_get_internal(allocator *alloc, ht_u64_u64 *table, void *p)
 {
     u64 index = (u8 *)p - alloc->data;
-    return ht_u64_u64_get(alloc->open, index, out);
+    u64 ret;
+    bool ok = ht_u64_u64_get(table, index, &ret);
+    if (!ok)
+    {
+        return 0;
+    }
+    return ret;
 }
 
-bool allocator_get_occupied(allocator *alloc, void *p, u64 *out)
+u64 allocator_get_open(allocator *alloc, void *p)
 {
-    u64 index = (u8 *)p - alloc->data;
-    return ht_u64_u64_get(alloc->occupied, index, out);
+    return allocator_get_internal(alloc, alloc->open, p);
+}
+
+u64 allocator_get_occupied(allocator *alloc, void *p)
+{
+    return allocator_get_internal(alloc, alloc->occupied, p);
 }

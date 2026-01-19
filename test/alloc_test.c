@@ -42,12 +42,11 @@ void test_alloc_simple()
     void *p = allocator_alloc(alloc, 100);
     TEST_ASSERT_NOT_NULL(p);
 
-    ok = allocator_get_occupied(alloc, p, &out);
-    TEST_ASSERT_TRUE(ok);
+    out = allocator_get_occupied(alloc, p);
     TEST_ASSERT_EQUAL_UINT64(100, out);
 
-    ok = allocator_get_open(alloc, p, &out);
-    TEST_ASSERT_FALSE(ok);
+    out = allocator_get_open(alloc, p);
+    TEST_ASSERT_EQUAL_UINT64(0, out);
 
     ok = ht_u64_u64_get(alloc->occupied, 0, &out);
     TEST_ASSERT_TRUE(ok);
@@ -96,19 +95,13 @@ void test_alloc_multiple()
     // Check we have 3 occupied blocks
     TEST_ASSERT_EQUAL_size_t(3, count_ht_entries(alloc->occupied));
 
-    u64 out;
-    bool ok;
-
-    ok = allocator_get_occupied(alloc, p1, &out);
-    TEST_ASSERT_TRUE(ok);
+    u64 out = allocator_get_occupied(alloc, p1);
     TEST_ASSERT_EQUAL_UINT64(100, out);
 
-    ok = allocator_get_occupied(alloc, p2, &out);
-    TEST_ASSERT_TRUE(ok);
+    out = allocator_get_occupied(alloc, p2);
     TEST_ASSERT_EQUAL_UINT64(200, out);
 
-    ok = allocator_get_occupied(alloc, p3, &out);
-    TEST_ASSERT_TRUE(ok);
+    out = allocator_get_occupied(alloc, p3);
     TEST_ASSERT_EQUAL_UINT64(300, out);
 
     allocator_destroy(alloc);
@@ -157,13 +150,12 @@ void test_free_simple()
     TEST_ASSERT_EQUAL_UINT64(100, size);
 
     // Check occupied block removed
-    u64 out;
-    bool ok = allocator_get_occupied(alloc, p, &out);
-    TEST_ASSERT_FALSE(ok);
+    u64 out = allocator_get_occupied(alloc, p);
+    TEST_ASSERT_EQUAL_UINT64(0, out);
 
     // After freeing, the block at 0 (size 100) merges with the block at 100 (size 924)
     // resulting in one block at 0 with size 1024
-    ok = ht_u64_u64_get(alloc->open, 0, &out);
+    bool ok = ht_u64_u64_get(alloc->open, 0, &out);
     TEST_ASSERT_TRUE(ok);
     TEST_ASSERT_EQUAL_UINT64(1024, out);
 
@@ -300,9 +292,7 @@ void test_alloc_after_free()
     void *p = allocator_alloc(alloc, 200);
     TEST_ASSERT_NOT_NULL(p);
 
-    u64 out;
-    bool ok = allocator_get_occupied(alloc, p, &out);
-    TEST_ASSERT_TRUE(ok);
+    u64 out = allocator_get_occupied(alloc, p);
     TEST_ASSERT_EQUAL_UINT64(200, out);
 
     allocator_destroy(alloc);
