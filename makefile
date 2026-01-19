@@ -1,10 +1,3 @@
-# =========================================================================
-#   Unity - A Test Framework for C
-#   ThrowTheSwitch.org
-#   Copyright (c) 2007-24 Mike Karlesky, Mark VanderVoord, & Greg Williams
-#   SPDX-License-Identifier: MIT
-# =========================================================================
-
 #We try to detect the OS we are running on, and adjust commands as needed
 ifeq ($(OS),Windows_NT)
   ifeq ($(shell uname -s),) # not in a bash-like shell
@@ -22,11 +15,6 @@ else
 endif
 
 C_COMPILER=gcc
-ifeq ($(shell uname -s), Darwin)
-C_COMPILER=clang
-endif
-
-UNITY_ROOT=.
 
 CFLAGS=-std=c99
 CFLAGS += -Wall
@@ -42,32 +30,25 @@ CFLAGS += -Wno-unknown-pragmas
 CFLAGS += -Wstrict-prototypes
 CFLAGS += -Wundef
 CFLAGS += -Wold-style-definition
-#CFLAGS += -Wno-misleading-indentation
 
-TARGET_BASE1=test1
-TARGET_BASE2=test2
-TARGET1 = $(TARGET_BASE1)$(TARGET_EXTENSION)
-TARGET2 = $(TARGET_BASE2)$(TARGET_EXTENSION)
-SRC_FILES1=$(UNITY_ROOT)/vendor/unity/unity.c src/ProductionCode.c  test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c
-SRC_FILES2=$(UNITY_ROOT)/vendor/unity/unity.c src/ProductionCode2.c test/TestProductionCode2.c test/test_runners/TestProductionCode2_Runner.c
-INC_DIRS=-Isrc -I$(UNITY_ROOT)/src
-SYMBOLS=
+TEST_RUNNERS_DIR=test/test_runners
+INC_DIRS=-Isrc -I/src
 
-all: clean default
+main: clean
+	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) src/main.c -o main
 
-default: $(SRC_FILES1) $(SRC_FILES2)
-	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) $(SRC_FILES1) -o $(TARGET1)
-	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) $(SRC_FILES2) -o $(TARGET2)
-	- ./$(TARGET1)
-	- ./$(TARGET2)
-
-test/test_runners/TestProductionCode_Runner.c: test/TestProductionCode.c
-	ruby $(UNITY_ROOT)/scripts/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c
-test/test_runners/TestProductionCode2_Runner.c: test/TestProductionCode2.c
-	ruby $(UNITY_ROOT)/scripts/generate_test_runner.rb test/TestProductionCode2.c test/test_runners/TestProductionCode2_Runner.c
+run: main
+	./main
 
 clean:
-	$(CLEANUP) $(TARGET1) $(TARGET2) test/test_runners/*
+	$(CLEANUP) rm -f *.exe *.msi *.so *.o main $(TEST_RUNNERS_DIR)/*
 
-ci: CFLAGS += -Werror
-ci: default
+TEST_1 = test1$(TARGET_EXTENSION)
+SRC_FILES_1=vendor/unity/unity.c test/hashtable_test.c $(TEST_RUNNERS_DIR)/hashtable_test_Runner.c
+
+test: clean $(SRC_FILES_1)
+	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) $(SRC_FILES_1) -o $(TEST_1)
+	- ./$(TEST_1)
+
+test/test_runners/hashtable_test_Runner.c: test/hashtable_test.c
+	ruby scripts/generate_test_runner.rb test/hashtable_test.c  $(TEST_RUNNERS_DIR)/hashtable_test_Runner.c
