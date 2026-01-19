@@ -43,10 +43,17 @@ clean:
 
 TEST_1 = test1$(TARGET_EXTENSION)
 SRC_FILES_1=vendor/unity/unity.c test/hashtable_test.c $(TEST_RUNNERS_DIR)/hashtable_test_Runner.c
+TEST_2 = test2=$(TARGET_EXTENSION)
+SRC_FILES_2=vendor/unity/unity.c src/alloc.c test/alloc_test.c $(TEST_RUNNERS_DIR)/alloc_test_Runner.c
 
-test: clean $(SRC_FILES_1)
-	$(C_COMPILER) $(CFLAGS) -DMODE_TEST $(INC_DIRS) $(SRC_FILES_1) -o $(TEST_1)
+test: clean $(SRC_FILES_1) $(SRC_FILES_2)
+	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) $(SRC_FILES_1) -o $(TEST_1)
+	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) $(SRC_FILES_2) -o $(TEST_2)
 	- ./$(TEST_1)
+	- ./$(TEST_2)
 
 test/test_runners/hashtable_test_Runner.c: test/hashtable_test.c
 	ruby scripts/generate_test_runner.rb test/hashtable_test.c  $(TEST_RUNNERS_DIR)/hashtable_test_Runner.c
+
+test/test_runners/alloc_test_Runner.c: test/alloc_test.c
+	ruby scripts/generate_test_runner.rb test/alloc_test.c  $(TEST_RUNNERS_DIR)/alloc_test_Runner.c

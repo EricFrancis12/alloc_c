@@ -17,9 +17,9 @@ int main()
 
     ht_u64_u64_destroy(table);
 
-    allocator *alloc = alloc_create(1024);
+    allocator *alloc = allocator_create(1024);
 
-    alloc_destroy(alloc);
+    allocator_destroy(alloc);
 
     printf("Goodbye\n");
 

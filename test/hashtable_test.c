@@ -2,12 +2,12 @@
 
 #include "hashtable.h"
 
-DEF_HASHTABLE_H(u64, u64);
 DEF_HASHTABLE(u64, u64);
 
 void test_hashtable_u64_u64()
 {
     ht_u64_u64 *table = ht_u64_u64_create(1024);
+    TEST_ASSERT_NOT_NULL(table);
 
     bool ok = ht_u64_u64_set(table, 1, 2);
     TEST_ASSERT_TRUE(ok);

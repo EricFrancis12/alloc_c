@@ -140,7 +140,7 @@
         return true;                                                              \
     }                                                                             \
                                                                                   \
-    bool ht_name##_set(ht_name *table, u64 key, u64 value)                        \
+    bool ht_name##_set(ht_name *table, k key, v value)                            \
     {                                                                             \
         if (table->length >= table->capacity / 2)                                 \
         {                                                                         \
@@ -195,23 +195,19 @@
     ht_name *ht_name##_create(size_t capacity);             \
                                                             \
     void ht_name##_destroy(ht_name *table);                 \
+                                                            \
     bool ht_name##_get(ht_name *table, k key, v *out);      \
                                                             \
     void ht_name##_set_entry(                               \
         ht_entry_name *entries, size_t capacity,            \
         k key, v value, size_t *plength);                   \
                                                             \
-    bool ht_name##_set(ht_name *table, u64 key, u64 value); \
+    bool ht_name##_set(ht_name *table, k key, v value);     \
                                                             \
     void ht_name##_delete(ht_name *table, k key);
 
 #define DEF_HASHTABLE_H(k, v) DEF_HASHTABLE_H_NAMED(ht_##k##_##v, ht_##k##_##v##_entry, k, v)
 
-#ifndef MODE_TEST
-
 DEF_HASHTABLE_H(u64, u64);
-DEF_HASHTABLE_H(u64, size_t);
-
-#endif
 
 #endif

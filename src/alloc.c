@@ -1,6 +1,6 @@
 #include "alloc.h"
 
-allocator *alloc_create(u64 capacity)
+allocator *allocator_create(u64 capacity)
 {
     allocator *alloc = malloc(sizeof(allocator));
     if (alloc == NULL)
@@ -30,7 +30,7 @@ allocator *alloc_create(u64 capacity)
         return NULL;
     }
 
-    ht_u64_size_t *occupied = ht_u64_size_t_create(1024);
+    ht_u64_u64 *occupied = ht_u64_u64_create(1024);
     if (occupied == NULL)
     {
         free(alloc);
@@ -47,56 +47,56 @@ allocator *alloc_create(u64 capacity)
     return alloc;
 }
 
-void alloc_destroy(allocator *alloc)
+void allocator_destroy(allocator *alloc)
 {
     ht_u64_u64_destroy(alloc->open);
-    ht_u64_size_t_destroy(alloc->occupied);
+    ht_u64_u64_destroy(alloc->occupied);
     free(alloc->data);
     free(alloc);
 }
 
-// void *arena_alloc(Arena *arena, u64 n)
-// {
-//     // First fit
-//     for (size_t i = 0; i < arena->open->capacity; i++)
-//     {
-//         ht_entry entry = arena->open->entries[i];
-//         if (entry.is_empty)
-//         {
-//             continue;
-//         }
+void *allocator_alloc(allocator *alloc, u64 n)
+{
+    // First fit
+    for (u64 i = 0; i < alloc->open->capacity; i++)
+    {
+        ht_u64_u64_entry entry = alloc->open->entries[i];
+        if (entry.is_empty)
+        {
+            continue;
+        }
 
-//         u64 index = entry.key;
-//         u64 open_space = entry.value;
+        u64 index = entry.key;
+        u64 open_space = entry.value;
 
-//         if (open_space >= n)
-//         {
-//             void *ret = arena->data[index];
+        if (open_space >= n)
+        {
+            void *ret = &alloc->data[index];
 
-//             if (!ht_set(arena->occupied, index, n))
-//             {
-//                 return NULL;
-//             }
+            if (!ht_u64_u64_set(alloc->occupied, index, n))
+            {
+                return NULL;
+            }
 
-//             ht_delete(arena->open, index);
+            ht_u64_u64_delete(alloc->open, index);
 
-//             u64 new_open_space = open_space - n;
-//             if (new_open_space > 0)
-//             {
-//                 if (!ht_set(arena->open, index + n, new_open_space))
-//                 {
-//                     return NULL;
-//                 }
-//             }
+            u64 new_open_space = open_space - n;
+            if (new_open_space > 0)
+            {
+                if (!ht_u64_u64_set(alloc->open, index + n, new_open_space))
+                {
+                    return NULL;
+                }
+            }
 
-//             return ret;
-//         }
-//     }
+            return ret;
+        }
+    }
 
-//     return NULL;
-// }
+    return NULL;
+}
 
-// u64 arena_free(Arena *arena, void *p)
+// u64 allocator_free(allocator *alloc, void *p)
 // {
 //     // TODO: ...
 
@@ -115,3 +115,15 @@ void alloc_destroy(allocator *alloc)
 
 //     // return n, true
 // }
+
+bool allocator_get_open(allocator *alloc, void *p, u64 *out)
+{
+    u64 index = (u8 *)p - alloc->data;
+    return ht_u64_u64_get(alloc->open, index, out);
+}
+
+bool allocator_get_occupied(allocator *alloc, void *p, u64 *out)
+{
+    u64 index = (u8 *)p - alloc->data;
+    return ht_u64_u64_get(alloc->occupied, index, out);
+}
