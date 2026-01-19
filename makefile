@@ -35,7 +35,7 @@ TEST_RUNNERS_DIR=test/test_runners
 INC_DIRS=-Isrc -I/src
 
 main: clean
-	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) src/main.c -o main
+	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) src/main.c src/hashtable.c -o main
 
 run: main
 	./main
@@ -47,7 +47,7 @@ TEST_1 = test1$(TARGET_EXTENSION)
 SRC_FILES_1=vendor/unity/unity.c test/hashtable_test.c $(TEST_RUNNERS_DIR)/hashtable_test_Runner.c
 
 test: clean $(SRC_FILES_1)
-	$(C_COMPILER) $(CFLAGS) $(INC_DIRS) $(SRC_FILES_1) -o $(TEST_1)
+	$(C_COMPILER) $(CFLAGS) -DMODE_TEST $(INC_DIRS) $(SRC_FILES_1) -o $(TEST_1)
 	- ./$(TEST_1)
 
 test/test_runners/hashtable_test_Runner.c: test/hashtable_test.c

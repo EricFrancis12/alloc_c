@@ -11,20 +11,6 @@
 #define FNV_PRIME 1099511628211UL
 
 #define DEF_HASHTABLE_NAMED(ht_name, ht_entry_name, k, v)                         \
-    typedef struct ht_entry_name                                                  \
-    {                                                                             \
-        k key;                                                                    \
-        v value;                                                                  \
-        bool is_empty;                                                            \
-    } ht_entry_name;                                                              \
-                                                                                  \
-    typedef struct ht_name                                                        \
-    {                                                                             \
-        ht_entry_name *entries;                                                   \
-        size_t capacity;                                                          \
-        size_t length;                                                            \
-    } ht_name;                                                                    \
-                                                                                  \
     ht_name *ht_name##_create(size_t capacity)                                    \
     {                                                                             \
         ht_name *table = malloc(sizeof(ht_name));                                 \
@@ -190,5 +176,42 @@
     }
 
 #define DEF_HASHTABLE(k, v) DEF_HASHTABLE_NAMED(ht_##k##_##v, ht_##k##_##v##_entry, k, v)
+
+#define DEF_HASHTABLE_H_NAMED(ht_name, ht_entry_name, k, v) \
+    typedef struct ht_entry_name                            \
+    {                                                       \
+        k key;                                              \
+        v value;                                            \
+        bool is_empty;                                      \
+    } ht_entry_name;                                        \
+                                                            \
+    typedef struct ht_name                                  \
+    {                                                       \
+        ht_entry_name *entries;                             \
+        size_t capacity;                                    \
+        size_t length;                                      \
+    } ht_name;                                              \
+                                                            \
+    ht_name *ht_name##_create(size_t capacity);             \
+                                                            \
+    void ht_name##_destroy(ht_name *table);                 \
+    bool ht_name##_get(ht_name *table, k key, v *out);      \
+                                                            \
+    void ht_name##_set_entry(                               \
+        ht_entry_name *entries, size_t capacity,            \
+        k key, v value, size_t *plength);                   \
+                                                            \
+    bool ht_name##_set(ht_name *table, u64 key, u64 value); \
+                                                            \
+    void ht_name##_delete(ht_name *table, k key);
+
+#define DEF_HASHTABLE_H(k, v) DEF_HASHTABLE_H_NAMED(ht_##k##_##v, ht_##k##_##v##_entry, k, v)
+
+#ifndef MODE_TEST
+
+DEF_HASHTABLE_H(u64, u64);
+DEF_HASHTABLE_H(u64, size_t);
+
+#endif
 
 #endif

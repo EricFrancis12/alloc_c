@@ -2,6 +2,7 @@
 
 #include "hashtable.h"
 
+DEF_HASHTABLE_H(u64, u64);
 DEF_HASHTABLE(u64, u64);
 
 void test_hashtable_u64_u64()
@@ -35,6 +36,7 @@ void test_hashtable_u64_u64()
     ht_u64_u64_destroy(table);
 }
 
+DEF_HASHTABLE_H(u64, size_t);
 DEF_HASHTABLE(u64, size_t);
 
 void test_hashtable_u64_size_t()
@@ -68,6 +70,7 @@ void test_hashtable_u64_size_t()
     ht_u64_size_t_destroy(table);
 }
 
+DEF_HASHTABLE_H(size_t, size_t);
 DEF_HASHTABLE(size_t, size_t);
 
 void test_hashtable_size_t_size_t()
