@@ -165,6 +165,7 @@
             if (key == table->entries[index].key)                                 \
             {                                                                     \
                 table->entries[index].is_empty = true;                            \
+                table->length--;                                                  \
                 return;                                                           \
             }                                                                     \
             index++;                                                              \

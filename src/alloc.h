@@ -20,6 +20,8 @@ void allocator_destroy(allocator *alloc);
 
 void *allocator_alloc(allocator *alloc, u64 n);
 
+u64 allocator_free(allocator *alloc, void *p);
+
 bool allocator_get_open(allocator *alloc, void *p, u64 *out);
 
 bool allocator_get_occupied(allocator *alloc, void *p, u64 *out);

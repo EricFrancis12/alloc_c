@@ -57,6 +57,11 @@ void allocator_destroy(allocator *alloc)
 
 void *allocator_alloc(allocator *alloc, u64 n)
 {
+    if (n == 0)
+    {
+        return NULL;
+    }
+
     // First fit
     for (u64 i = 0; i < alloc->open->capacity; i++)
     {
@@ -96,25 +101,65 @@ void *allocator_alloc(allocator *alloc, u64 n)
     return NULL;
 }
 
-// u64 allocator_free(allocator *alloc, void *p)
-// {
-//     // TODO: ...
+static u64 allocator_merge_open_blocks(allocator *alloc)
+{
+    u64 merge_count = 0;
 
-//     // u64 n;
-//     // ht_get(arena->occupied, );
-//     // n, ok := a.occupied[index]
-//     // if !ok {
-//     // 	return 0, false
-//     // }
+    // Keep merging until no more adjacent blocks found
+    bool merged = true;
+    while (merged)
+    {
+        merged = false;
 
-//     // delete(a.occupied, index)
+        for (u64 i = 0; i < alloc->open->capacity; i++)
+        {
+            ht_u64_u64_entry entry = alloc->open->entries[i];
+            if (entry.is_empty)
+            {
+                continue;
+            }
 
-//     // a.open[index] = n
+            u64 index = entry.key;
+            u64 open_space = entry.value;
 
-//     // a.mergeOpenBlocks()
+            u64 next_index = index + open_space;
 
-//     // return n, true
-// }
+            u64 next_space;
+            bool ok = ht_u64_u64_get(alloc->open, next_index, &next_space);
+            if (ok)
+            {
+                // Found adjacent blocks - merge them
+                ht_u64_u64_set(alloc->open, index, open_space + next_space);
+                ht_u64_u64_delete(alloc->open, next_index);
+                merge_count++;
+                merged = true;
+                break; // Restart iteration since we modified the map
+            }
+        }
+    }
+
+    return merge_count;
+}
+
+u64 allocator_free(allocator *alloc, void *p)
+{
+    u64 index = (u8 *)p - alloc->data;
+
+    u64 n;
+    bool ok = ht_u64_u64_get(alloc->occupied, index, &n);
+    if (!ok)
+    {
+        return 0;
+    }
+
+    ht_u64_u64_delete(alloc->occupied, index);
+
+    ht_u64_u64_set(alloc->open, index, n);
+
+    allocator_merge_open_blocks(alloc);
+
+    return n;
+}
 
 bool allocator_get_open(allocator *alloc, void *p, u64 *out)
 {
