@@ -11,8 +11,6 @@ char *concat(allocator *alloc, int count, ...);
 
 bool is_whitespace(char c);
 
-char *trim_internal(allocator *alloc, const char *s, bool trim_left, bool trim_right);
-
 char *trim(allocator *alloc, const char *s);
 
 char *trim_left(allocator *alloc, const char *s);

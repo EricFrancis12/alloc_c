@@ -41,7 +41,7 @@ bool is_whitespace(char c)
     return c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\f' || c == '\v';
 }
 
-char *trim_internal(allocator *alloc, const char *s, bool trim_left, bool trim_right)
+static char *trim_internal(allocator *alloc, const char *s, bool trim_left, bool trim_right)
 {
     // Move the pointer forward to skip leading whitespace
     const char *start = s;
